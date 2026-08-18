@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Google Search Ranking & Discoverability Capstone</title>
+
+  <meta
+    name="description"
+    content="A research analysis of content characteristics associated with strong-performing pages using FlyRank search data."
+  >
+
+  <style>
+    :root {
+      --bg: #f5f8f7;
+      --card: #ffffff;
+      --text: #18302b;
+      --muted: #60716d;
+      --line: #d9e3df;
+      --accent: #17785f;
+      --accent-soft: #e8f4ef;
+      --dark: #17332d;
+      --warning: #7a5b12;
+      --warning-bg: #fff7df;
+      --shadow: 0 12px 35px rgba(20, 55, 47, 0.07);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family:
+        Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      line-height: 1.7;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      width: min(1120px, calc(100% - 36px));
+      margin: 0 auto;
+    }
+
+    header {
+      padding: 72px 0 48px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 6px 10px;
+      border: 1px solid #b9d8ce;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      max-width: 900px;
+      margin: 18px 0 16px;
+      font-size: clamp(2.3rem, 5vw, 4.6rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    .hero-subtitle {
+      max-width: 800px;
+      color: var(--muted);
+      font-size: 1.1rem;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      margin-top: 24px;
+    }
+
+    .meta span {
+      padding: 7px 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--card);
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 248, 247, 0.94);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav-inner {
+      display: flex;
+      gap: 18px;
+      overflow-x: auto;
+      padding: 12px 0;
+    }
+
+    .nav-inner a {
+      flex: 0 0 auto;
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+    }
+
+    main {
+      padding: 46px 0 80px;
+    }
+
+    section {
+      margin: 0 0 44px;
+    }
+
+    .section-label {
+      margin-bottom: 8px;
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin: 0 0 16px;
+      font-size: clamp(1.7rem, 3vw, 2.5rem);
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+    }
+
+    h3 {
+      margin-top: 28px;
+      margin-bottom: 10px;
+      font-size: 1.15rem;
+    }
+
+    p {
+      margin: 0 0 16px;
+    }
+
+    .card {
+      padding: 28px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    .abstract {
+      border-left: 4px solid var(--accent);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .stat {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+
+    .stat-number {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    th,
+    td {
+      padding: 13px 15px;
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      vertical-align: top;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: #f1f6f4;
+      color: var(--dark);
+      font-weight: 800;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .bar-chart {
+      display: grid;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .bar-row {
+      display: grid;
+      gap: 7px;
+    }
+
+    .bar-label {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      font-size: 0.88rem;
+      font-weight: 700;
+    }
+
+    .bar-track {
+      height: 13px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: #e5ece9;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: var(--accent);
+    }
+
+    .callout {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border: 1px solid #e4d298;
+      border-radius: 14px;
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    code {
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #eef3f1;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.9em;
+    }
+
+    ul {
+      padding-left: 22px;
+    }
+
+    li {
+      margin-bottom: 8px;
+    }
+
+    .recommendation {
+      padding: 20px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--card);
+    }
+
+    .rank {
+      display: inline-flex;
+      width: 32px;
+      height: 32px;
+      align-items: center;
+      justify-content: center;
+      margin-right: 10px;
+      border-radius: 50%;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    footer {
+      padding: 36px 0 60px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 850px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      header {
+        padding-top: 46px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 22px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header id="top">
+    <div class="container">
+      <span class="eyebrow">Machine Learning Capstone · Week 8</span>
+
+      <h1>Google Search Ranking &amp; Discoverability</h1>
+
+      <p class="hero-subtitle">
+        A research analysis of which page and content characteristics are
+        associated with strong-performing pages, and how those associations
+        can support focused diagnostic review.
+      </p>
+
+      <div class="meta">
+        <span>FlyRank ML Internship</span>
+        <span>Ranking Signal Analysis</span>
+        <span>205,749 pages</span>
+        <span>Client-grouped evaluation</span>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="container nav-inner">
+      <a href="#abstract">Abstract</a>
+      <a href="#introduction">Introduction</a>
+      <a href="#data">Data</a>
+      <a href="#methodology">Methodology</a>
+      <a href="#results">Results</a>
+      <a href="#limitations">Limitations</a>
+      <a href="#recommendations">Recommendations</a>
+      <a href="#reproducibility">Reproducibility</a>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+
+      <section id="abstract">
+        <div class="section-label">Abstract</div>
+        <div class="card abstract">
+
+          <h2>What characteristics are associated with strong-performing pages?</h2>
+
+          <p>
+            This study asks which safe page and content characteristics are
+            associated with strong-performing pages in the FlyRank
+            <code>ranking_lifecycle</code> dataset. A page was labeled strong
+            when both its 30-day impressions and clicks were at or above their
+            respective 90th-percentile thresholds, producing 14,972 strong
+            pages out of 205,749 observations. Ten page/content features were
+            evaluated with a client-grouped train/test design, a majority-class
+            baseline, Logistic Regression as the primary model, and Random
+            Forest as a nonlinear robustness comparison. Logistic Regression
+            achieved an Average Precision of 0.0984 against an 8.49% test-set
+            base rate, while Random Forest achieved 0.0877, indicating some
+            measurable association but weak overall discrimination. The result
+            supports diagnostic prioritization rather than causal claims or
+            automatic refresh decisions.
+          </p>
+
+        </div>
+      </section>
+
+      <section id="introduction">
+        <div class="section-label">01 · Introduction / Problem Statement</div>
+
+        <div class="card">
+          <h2>Decision this research supports</h2>
+
+          <p>
+            Content teams need a practical way to understand which page
+            characteristics are associated with stronger current-state
+            performance without using the performance variables themselves as
+            predictive inputs.
+          </p>
+
+          <p>
+            The decision supported by this analysis is:
+            <strong>
+              understand characteristics associated with strong-performing
+              pages and use those characteristics to prioritize diagnostic
+              review.
+            </strong>
+          </p>
+
+          <div class="callout">
+            The analysis is observational. It does not establish that changing
+            a page characteristic will cause performance to improve.
+          </div>
+        </div>
+      </section>
+
+      <section id="data">
+        <div class="section-label">02 · Data</div>
+
+        <h2>Dataset and benchmark</h2>
+
+        <div class="grid">
+          <div class="stat">
+            <span class="stat-number">205,749</span>
+            <span class="stat-label">page observations</span>
+          </div>
+
+          <div class="stat">
+            <span class="stat-number">34</span>
+            <span class="stat-label">dataset columns</span>
+          </div>
+
+          <div class="stat">
+            <span class="stat-number">2,080</span>
+            <span class="stat-label">90th-percentile impressions threshold</span>
+          </div>
+
+          <div class="stat">
+            <span class="stat-number">8</span>
+            <span class="stat-label">90th-percentile clicks threshold</span>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 18px;">
+          <p>
+            The analysis uses the FlyRank
+            <code>internship-lanes</code> dataset, specifically the
+            <code>ranking_lifecycle</code> subset.
+          </p>
+
+          <p>
+            The unit of analysis is the content/page. The analysis uses
+            30-day performance fields. <code>impressions_30d</code> and
+            <code>clicks_30d</code> are complete in the full dataset.
+            <code>sessions_30d</code> is missing for 26.04% of rows, so it was
+            excluded from the benchmark to avoid requiring a partially
+            observed metric.
+          </p>
+
+          <p>
+            A page is labeled strong when both
+            <code>impressions_30d &ge; 2,080</code> and
+            <code>clicks_30d &ge; 8</code>.
+            This produces <strong>14,972 strong pages</strong>, or
+            <strong>7.28%</strong> of the dataset.
+          </p>
+
+          <p>
+            Pseudonymous identifiers are used only where needed for grouping
+            or ranking output. Client names, domains, URLs, private queries,
+            credentials, and other client-identifying information are excluded
+            from the public paper.
+          </p>
+        </div>
+
+        <h3>Benchmark composition</h3>
+
+        <div class="card">
+          <div class="bar-chart">
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Not strong</span>
+                <span>190,777 · 92.72%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 92.72%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Strong</span>
+                <span>14,972 · 7.28%</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 7.28%;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="methodology">
+        <div class="section-label">03 · Methodology</div>
+
+        <h2>Clean feature design and grouped validation</h2>
+
+        <div class="two-col">
+
+          <div class="card">
+            <h3>Ten predictive features</h3>
+
+            <ul>
+              <li><code>keyword_char_count</code></li>
+              <li><code>keyword_token_count</code></li>
+              <li><code>public_url_char_count</code></li>
+              <li><code>public_url_path_depth</code></li>
+              <li><code>content_title_char_count</code></li>
+              <li><code>content_title_token_count</code></li>
+              <li><code>search_volume</code></li>
+              <li><code>content_type</code></li>
+              <li><code>main_intent</code></li>
+              <li><code>content_age_days</code></li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Excluded from predictive features</h3>
+
+            <p>
+              Performance variables used to construct the label, other
+              performance-derived fields, and pseudonymous identifiers were
+              excluded.
+            </p>
+
+            <p>
+              <code>content_created_at</code> was excluded because
+              <code>content_age_days</code> already represents the same
+              temporal information.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="card" style="margin-top: 18px;">
+          <h3>Validation design</h3>
+
+          <p>
+            The final evaluation uses a stratified group split by
+            <code>client_hash_id</code>. Entire clients remain in either the
+            training or held-out test set, preventing client overlap.
+          </p>
+
+          <div class="grid">
+            <div class="stat">
+              <span class="stat-number">156,000</span>
+              <span class="stat-label">training pages</span>
+            </div>
+
+            <div class="stat">
+              <span class="stat-number">49,749</span>
+              <span class="stat-label">test pages</span>
+            </div>
+
+            <div class="stat">
+              <span class="stat-number">43</span>
+              <span class="stat-label">training clients</span>
+            </div>
+
+            <div class="stat">
+              <span class="stat-number">11</span>
+              <span class="stat-label">test clients</span>
+            </div>
+          </div>
+
+          <p style="margin-top: 18px;">
+            Client overlap was <strong>0</strong>. The training strong-page
+            rate was 6.89% and the held-out test strong-page rate was 8.49%.
+          </p>
+        </div>
+
+        <div class="two-col" style="margin-top: 18px;">
+
+          <div class="card">
+            <h3>Preprocessing</h3>
+
+            <p>
+              Numeric features use median imputation and standardization.
+              Categorical features use most-frequent imputation and
+              one-hot encoding. Preprocessing is fitted within the modeling
+              pipeline using training data only.
+            </p>
+          </div>
+
+          <div class="card">
+            <h3>Models</h3>
+
+            <p>
+              The majority-class baseline always predicts
+              <code>not strong</code>.
+            </p>
+
+            <p>
+              Logistic Regression is the primary model because it provides
+              interpretable coefficients and probability scores.
+            </p>
+
+            <p>
+              Random Forest is a robustness comparison testing whether
+              nonlinear relationships improve discrimination.
+            </p>
+          </div>
+
+        </div>
+
+        <div class="card" style="margin-top: 18px;">
+          <h3>Threshold selection</h3>
+
+          <p>
+            Classification thresholds are selected using five-fold
+            stratified group out-of-fold predictions from the training data
+            only, with F1 as the selection criterion. The selected threshold
+            is then frozen and applied once to the untouched test set.
+          </p>
+        </div>
+      </section>
+
+      <section id="results">
+        <div class="section-label">04 · Results</div>
+
+        <h2>Model performance versus baseline</h2>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Model</th>
+                <th>Accuracy</th>
+                <th>Precision</th>
+                <th>Recall</th>
+                <th>F1</th>
+                <th>Average Precision</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>Majority baseline</td>
+                <td>0.9151</td>
+                <td>0.0000</td>
+                <td>0.0000</td>
+                <td>0.0000</td>
+                <td>0.0849</td>
+              </tr>
+
+              <tr>
+                <td><strong>Logistic Regression</strong></td>
+                <td>0.5789</td>
+                <td>0.0871</td>
+                <td>0.4180</td>
+                <td>0.1442</td>
+                <td><strong>0.0984</strong></td>
+              </tr>
+
+              <tr>
+                <td>Random Forest</td>
+                <td>0.3594</td>
+                <td>0.0845</td>
+                <td>0.6656</td>
+                <td>0.1499</td>
+                <td>0.0877</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Average Precision comparison</h3>
+
+        <div class="card">
+          <div class="bar-chart">
+
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Majority baseline</span>
+                <span>0.0849</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 84.9%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Logistic Regression</span>
+                <span>0.0984</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 98.4%;"></div>
+              </div>
+            </div>
+
+            <div class="bar-row">
+              <div class="bar-label">
+                <span>Random Forest</span>
+                <span>0.0877</span>
+              </div>
+              <div class="bar-track">
+                <div class="bar-fill" style="width: 87.7%;"></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="card" style="margin-top: 18px;">
+          <h3>Interpretation</h3>
+
+          <p>
+            Logistic Regression improves ranking discrimination relative to
+            the majority baseline, with Average Precision of 0.0984 versus a
+            test-set base rate of 0.0849, or <strong>1.16× lift</strong>.
+          </p>
+
+          <p>
+            Random Forest produces higher recall and slightly higher F1, but
+            its Average Precision of 0.0877 is only <strong>1.03×</strong>
+            the test-set base rate.
+          </p>
+
+          <p>
+            Logistic Regression is therefore retained as the primary model.
+            The evidence indicates that the selected content/page features
+            contain some measurable signal, but their combined ability to
+            distinguish strong from non-strong pages is limited.
+          </p>
+        </div>
+
+        <h3>Error analysis</h3>
+
+        <div class="card">
+          <p>
+            On the held-out client test set, the primary model produced:
+          </p>
+
+          <ul>
+            <li>28,798 correct classifications</li>
+            <li>18,494 false positives</li>
+            <li>2,457 false negatives</li>
+          </ul>
+
+          <p>
+            The large number of false positives is consistent with the model's
+            low precision and moderate recall. Error counts should also be
+            interpreted alongside category prevalence.
+          </p>
+        </div>
+
+        <h3>Observed associations</h3>
+
+        <div class="card">
+          <p>
+            Logistic Regression coefficients showed associations involving
+            keyword length, URL structure, content title characteristics,
+            search volume, content age, content type, and search intent.
+          </p>
+
+          <p>
+            These coefficients describe observed associations within the
+            modeled data. They should not be interpreted as causal effects or
+            as evidence that changing one feature will improve performance.
+          </p>
+        </div>
+      </section>
+
+      <section id="limitations">
+        <div class="section-label">05 · Limitations &amp; Honest Framing</div>
+
+        <div class="card">
+          <h2>What this work cannot claim</h2>
+
+          <p>
+            This analysis is observational and supports decision-making rather
+            than causal inference.
+          </p>
+
+          <p>
+            The strong-page label is constructed from current 30-day
+            impressions and clicks, so the model describes current-state
+            association rather than future performance.
+          </p>
+
+          <p>
+            The feature set intentionally excludes performance and
+            performance-derived variables that could leak the label. This
+            keeps the experiment methodologically clean but limits predictive
+            information.
+          </p>
+
+          <p>
+            Model discrimination is weak. Logistic Regression achieves an
+            Average Precision of 0.0984 against an 8.49% test-set base rate,
+            or 1.16× lift over the base-rate benchmark.
+          </p>
+
+          <p>
+            The Top-10 output should therefore be treated as a
+            <strong>diagnostic review shortlist</strong> rather than an
+            automatic refresh recommendation.
+          </p>
+
+          <p>
+            Rare categorical levels were not treated as substantive findings
+            when support was very small.
+          </p>
+        </div>
+      </section>
+
+      <section id="recommendations">
+        <div class="section-label">06 · Ranked Recommendations</div>
+
+        <h2>Top-10 diagnostic review shortlist</h2>
+
+        <div class="card">
+          <p>
+            The Top 10 currently non-strong pages are ranked by Logistic
+            Regression probability for strong-page membership. Higher scores
+            indicate stronger modeled association with the strong-page
+            benchmark.
+          </p>
+
+          <p>
+            These are <strong>diagnostic review candidates</strong>, not
+            guaranteed refresh opportunities. A human reviewer decides
+            whether to improve, monitor, consolidate, or leave each page
+            unchanged.
+          </p>
+        </div>
+
+        <div class="table-wrap" style="margin-top: 18px;">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Content ID</th>
+                <th>Content type</th>
+                <th>Main intent</th>
+                <th>Impressions</th>
+                <th>Clicks</th>
+                <th>Strong probability</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><code>content_ed387d50aeda893b</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>1,551</td>
+                <td>10</td>
+                <td>0.4389</td>
+                <td>Below impression benchmark</td>
+              </tr>
+
+              <tr>
+                <td>2</td>
+                <td><code>content_6b751c564c9d19a3</code></td>
+                <td>keyword article</td>
+                <td>commercial</td>
+                <td>658</td>
+                <td>0</td>
+                <td>0.4201</td>
+                <td>Below both benchmarks</td>
+              </tr>
+
+              <tr>
+                <td>3</td>
+                <td><code>content_b515d5567c5ac5fe</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>3,549</td>
+                <td>0</td>
+                <td>0.4143</td>
+                <td>Below click benchmark</td>
+              </tr>
+
+              <tr>
+                <td>4</td>
+                <td><code>content_f4b83a968822dabc</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>183</td>
+                <td>0</td>
+                <td>0.4073</td>
+                <td>Below both benchmarks</td>
+              </tr>
+
+              <tr>
+                <td>5</td>
+                <td><code>content_cc3422d428f55b86</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>419</td>
+                <td>0</td>
+                <td>0.4061</td>
+                <td>Below both benchmarks</td>
+              </tr>
+
+              <tr>
+                <td>6</td>
+                <td><code>content_80aa45ca737d6220</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>222</td>
+                <td>1</td>
+                <td>0.4018</td>
+                <td>Below both benchmarks</td>
+              </tr>
+
+              <tr>
+                <td>7</td>
+                <td><code>content_762f7da095bfd414</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>133</td>
+                <td>0</td>
+                <td>0.4000</td>
+                <td>Below both benchmarks</td>
+              </tr>
+
+              <tr>
+                <td>8</td>
+                <td><code>content_f9771e56b76378be</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>1,271</td>
+                <td>7</td>
+                <td>0.3963</td>
+                <td>Below both benchmarks</td>
+              </tr>
+
+              <tr>
+                <td>9</td>
+                <td><code>content_20d8b7cf4c98c898</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>2,410</td>
+                <td>3</td>
+                <td>0.3928</td>
+                <td>Below click benchmark</td>
+              </tr>
+
+              <tr>
+                <td>10</td>
+                <td><code>content_0fbbbc3015af1e4d</code></td>
+                <td>keyword article</td>
+                <td>transactional</td>
+                <td>216</td>
+                <td>0</td>
+                <td>0.3923</td>
+                <td>Below both benchmarks</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="callout">
+          Action rule: use the ranking to decide where human review should
+          start. Do not interpret the score as a promise of future growth or
+          as a guarantee that a content refresh will improve performance.
+        </div>
+      </section>
+
+      <section id="reproducibility">
+        <div class="section-label">07 · Reproducibility</div>
+
+        <div class="card">
+          <h2>Re-run information</h2>
+
+          <p>
+            The notebook uses a fixed random seed of <strong>42</strong>.
+            The analysis is designed to run from a fresh environment using
+            the same FlyRank dataset release and
+            <code>ranking_lifecycle</code> subset.
+          </p>
+
+          <h3>Environment</h3>
+
+          <ul>
+            <li>pandas 2.2.2</li>
+            <li>numpy 2.5.2</li>
+            <li>datasets 4.0.0</li>
+            <li>scikit-learn 1.6.1</li>
+            <li>matplotlib 3.10.0</li>
+          </ul>
+
+          <h3>Research notebook</h3>
+
+          <p>
+            <a
+              href="https://github.com/russelfordguinoo-oss/Russel-Repository-/blob/main/work/notebooks/capstone.ipynb"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              View the capstone notebook on GitHub
+            </a>
+          </p>
+
+          <p>
+            The repository contains the reproducible analysis, feature
+            contract, validation design, model comparison, error analysis,
+            and ranked diagnostic output.
+          </p>
+        </div>
+      </section>
+
+      <section id="acknowledgments">
+        <div class="section-label">08 · Acknowledgments &amp; Data Credit</div>
+
+        <div class="card">
+          <h2>Data source</h2>
+
+          <p>
+            Built on the
+            <strong>FlyRank ML Internship dataset</strong>.
+          </p>
+
+          <p>
+            <a
+              href="https://flyrank.ai"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              FlyRank
+            </a>
+          </p>
+
+          <p>
+            This public paper intentionally excludes client names, domains,
+            URLs, private queries, credentials, and raw exports.
+          </p>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>
+        Google Search Ranking &amp; Discoverability Capstone · Machine Learning
+      </p>
+
+      <p>
+        This research is observational and intended for decision support.
+      </p>
+
+      <p>
+        <a href="#top">Back to top</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
